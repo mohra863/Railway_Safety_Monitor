@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+.venv/
+.streamlit/
+models/*.pt
+data/videos/*
+!data/videos/.gitkeep
+data/frames/*
+!data/frames/.gitkeep
+outputs/processed_videos/*
+!outputs/processed_videos/.gitkeep
+outputs/alerts/*
+!outputs/alerts/.gitkeep
+outputs/screenshots/*
+!outputs/screenshots/.gitkeep
