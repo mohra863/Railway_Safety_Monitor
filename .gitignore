@@ -13,3 +13,10 @@ outputs/alerts/*
 !outputs/alerts/.gitkeep
 outputs/screenshots/*
 !outputs/screenshots/.gitkeep
+# Local secrets – never commit
+.env
+.env.*
+!.env.example
+#Temporary video and model files
+outputs/*.mp4
+yolov8n.pt

@@ -31,10 +31,94 @@ The bottom center polygon is only a demonstration default. Configure it for each
 
 Ultralytics selects an available compute device automatically. For NVIDIA acceleration on Windows 11, install a compatible NVIDIA driver and install the PyTorch build matching that driver from the official PyTorch selector before installing this project's requirements. CPU processing remains available. Do not package model weights or surveillance videos in the source archive.
 
-## Hafnia VLM
+## Hafnia Gateway Analysis
 
-`src/hafnia_client.py` is a deliberately disabled integration boundary. No URL, credential, or request schema is assumed. Enable implementation only after obtaining the actual Gateway API documentation and credentials.
+The **Hafnia Gateway Analysis** tab lets you query the Hafnia VLM through the local
+Gateway API (`https://localhost:15443`) and display the returned video summary.
+
+### Required configuration
+
+The client reads credentials in this priority order:
+
+| Priority | Source | How to set |
+|----------|--------|-----------|
+| 1 | Shell environment variable | `export HAFNIA_PASSWORD=…` |
+| 2 | `.env` file in the project root | Copy `.env.example` → `.env` and fill in values |
+| 3 | Streamlit `secrets.toml` | See [Streamlit secrets docs](https://docs.streamlit.io/deploy/streamlit-community-cloud/deploy-your-app/secrets-management) |
+
+Only **`HAFNIA_PASSWORD`** is mandatory. The URL and username already have safe defaults.
+
+### One-time setup (recommended: `.env` file)
+
+```bash
+# 1. Copy the example file
+cp .env.example .env
+
+# 2. Open .env in any editor and set your Windows password
+#    (the password you use to log in to the machine running the gateway)
+nano .env          # or: code .env, vim .env, …
+```
+
+`.env` is listed in `.gitignore` and will **never** be committed to Git.
+
+### `.env` file format
+
+```dotenv
+# Required
+HAFNIA_PASSWORD=your_windows_password_here
+
+# Optional – defaults shown
+HAFNIA_GATEWAY_URL=https://localhost:15443
+HAFNIA_USERNAME=administrator
+```
+
+### Alternative: Streamlit secrets
+
+Create `.streamlit/secrets.toml` (also git-ignored):
+
+```toml
+HAFNIA_PASSWORD = "your_windows_password_here"
+# HAFNIA_GATEWAY_URL = "https://localhost:15443"
+# HAFNIA_USERNAME = "administrator"
+```
+
+### Alternative: shell environment variable
+
+```bash
+# Linux / macOS
+export HAFNIA_PASSWORD=your_windows_password_here
+streamlit run app.py
+
+# Windows PowerShell
+$env:HAFNIA_PASSWORD = "your_windows_password_here"
+streamlit run app.py
+```
+
+### Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### Run the app
+
+```bash
+streamlit run app.py
+```
+
+Switch to the **Hafnia Gateway Analysis** tab, select a time range (≤ 30 seconds is
+recommended to stay within the Gateway's 60-second VMS export timeout), enter a prompt,
+and click **Run Hafnia analysis**.
 
 ## Tests
 
-Run the core logic tests with `python -m unittest discover -s tests`. They cover polygon transitions, tracking association, and alert cooldown without downloading model weights.
+Run all tests:
+
+```bash
+python -m pytest tests/ -v
+# or
+python -m unittest discover -s tests
+```
+
+The Hafnia client tests mock all HTTP requests; no real Gateway connection or
+`.env` file is required.
